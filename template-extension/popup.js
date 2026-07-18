@@ -36,6 +36,19 @@ let mockStorage = {
       rmcbApproved: false
     },
     {
+      id: "MDL-5040",
+      name: "Lending Fraud Classifier",
+      owner: "Fraud Analytics Division",
+      version: "1.1.2",
+      riskTier: "Tier 1",
+      type: "AI-ML",
+      status: "Breach",
+      validationDate: "2026-04-10",
+      rmcbApproved: true,
+      psiValue: 0.28, // Triggers Breach! (Threshold: 0.25)
+      remediated: false
+    },
+    {
       id: "MDL-0912",
       name: "Home Loan Interest Spreadsheet Calc",
       owner: "Mortgage Operations",
@@ -49,7 +62,8 @@ let mockStorage = {
   ],
   logs: [
     "[SYSTEM INFO] Secure Sandbox active database initiated.",
-    "[COMPLIANCE] Verified 10-year retention rule implementation."
+    "[COMPLIANCE] Verified 10-year retention rule implementation.",
+    "[READY] Monitoring active spreadsheet tabs."
   ]
 };
 
@@ -105,6 +119,7 @@ function escapeHTML(str) {
 
 // State variables
 let activeAssessment = null;
+let pollingIntervalId = null;
 
 document.addEventListener("DOMContentLoaded", async () => {
   // Initialize default models if empty
@@ -113,6 +128,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     await storage.set("mrm_models", mockStorage.models);
     await storage.set("mrm_logs", mockStorage.logs);
   }
+
+  // Check for model drift breaches
+  await checkDriftBreaches();
 
   // Bind navigation tabs
   const tabButtons = document.querySelectorAll(".tab-btn");
@@ -439,6 +457,81 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
+  // Breach Alerts Remediation Handlers
+  const linkShowRemediation = document.getElementById("btn-show-remediation");
+  const formRemediation = document.getElementById("remediation-form-container");
+  const btnCancelRemediation = document.getElementById("btn-cancel-remediation");
+  const btnSubmitRemediation = document.getElementById("btn-submit-remediation");
+
+  if (linkShowRemediation) {
+    linkShowRemediation.addEventListener("click", () => {
+      formRemediation.classList.remove("hidden");
+    });
+  }
+
+  if (btnCancelRemediation) {
+    btnCancelRemediation.addEventListener("click", () => {
+      formRemediation.classList.add("hidden");
+    });
+  }
+
+  if (btnSubmitRemediation) {
+    btnSubmitRemediation.addEventListener("click", async () => {
+      const remediationText = document.getElementById("remediation-actions").value;
+      const rmcbChecked = document.getElementById("chk-remediation-rmcb").checked;
+
+      if (!remediationText) {
+        alert("Please fill in the retraining and compensating controls plans.");
+        return;
+      }
+
+      if (!rmcbChecked) {
+        alert("Compliance Error: The remediation report must be formally routed and checked for Board (RMCB) reporting.");
+        return;
+      }
+
+      // Resolve drift breach in MDL-5040
+      const modelsList = await storage.get("mrm_models", mockStorage.models);
+      const idx = modelsList.findIndex(m => m.id === "MDL-5040");
+      if (idx !== -1) {
+        modelsList[idx].status = "Active";
+        modelsList[idx].remediated = true;
+        modelsList[idx].remediationPlan = remediationText;
+        await storage.set("mrm_models", modelsList);
+      }
+
+      await addLog(`[RMCB FORMAL REPORT] Resolved high drift breach for MDL-5040. Retraining controls filed: "${remediationText.substring(0, 40)}..."`);
+      alert("Breach Remediation Submitted! Formal report logged in RMCB Board compliance repository.");
+
+      // Hide remediation form and check drift again
+      formRemediation.classList.add("hidden");
+      document.getElementById("remediation-actions").value = "";
+      document.getElementById("chk-remediation-rmcb").checked = false;
+      await checkDriftBreaches();
+      renderInventory();
+    });
+  }
+
+  // Continuous Pipeline Sync Polling listener
+  const chkContinuousSync = document.getElementById("chk-continuous-sync");
+  if (chkContinuousSync) {
+    chkContinuousSync.addEventListener("change", () => {
+      if (chkContinuousSync.checked) {
+        addLog("Continuous Scheduled Pipeline Sync activated (24h Polling active).");
+        pollingIntervalId = setInterval(async () => {
+          await addLog("[PIPELINE SYNC] Scheduled polling fetch executed...");
+          await addLog("[PIPELINE SYNC] Pulled central ML Pipeline validation metrics. No new breaches detected.");
+        }, 8000); // Fast mock polling interval of 8s for user visualization
+      } else {
+        if (pollingIntervalId) {
+          clearInterval(pollingIntervalId);
+          pollingIntervalId = null;
+        }
+        addLog("Continuous Scheduled Pipeline Sync deactivated.");
+      }
+    });
+  }
+
   // Sync Operations
   const btnSync = document.getElementById("btn-sync-now");
   if (btnSync) {
@@ -497,6 +590,23 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 });
 
+// Helper to scan for drift breaches
+async function checkDriftBreaches() {
+  const modelsList = await storage.get("mrm_models", mockStorage.models);
+  const banner = document.getElementById("mrm-breach-alert-banner");
+  if (!banner) return;
+
+  // Find any active model with status === 'Breach' or psiValue > 0.25 that hasn't been remediated
+  const breachModel = modelsList.find(m => m.psiValue > 0.25 && !m.remediated);
+
+  if (breachModel) {
+    document.getElementById("breach-model-id").innerText = breachModel.id;
+    banner.classList.remove("hidden");
+  } else {
+    banner.classList.add("hidden");
+  }
+}
+
 // Dynamic Dropdowns populator for AI/ML Audit Tab
 async function populateModelDropdowns() {
   const dropdown = document.getElementById("ai-audit-model-select");
@@ -545,12 +655,21 @@ async function renderInventory() {
     if (m.riskTier === "Tier 2") tierClass = "tier-2";
 
     // Status classes
-    const statusClass = m.status === "Active" ? "active" : "retired";
+    let statusClass = "active";
+    let statusText = m.status;
+    if (m.status === "Retired") {
+      statusClass = "retired";
+    } else if (m.status === "Breach" && m.psiValue > 0.25 && !m.remediated) {
+      statusClass = "breach";
+      statusText = "Breach (Drift)";
+    }
 
     // Actions cell
     let actionBtnHTML = "";
     if (m.status === "Active") {
       actionBtnHTML = `<button class="btn-secondary btn-decommission" data-id="${m.id}" style="font-size: 10px; padding: 2px 6px;">Decommission</button>`;
+    } else if (m.status === "Breach" && m.psiValue > 0.25 && !m.remediated) {
+      actionBtnHTML = `<button class="btn-primary btn-breach-remediate" style="font-size: 10px; padding: 2px 6px; background-color: var(--warning-color);">Remediate</button>`;
     } else {
       actionBtnHTML = `<span style="color: #64748b; font-size: 10px; font-style: italic;">Archived (10Yr Ret.)</span>`;
     }
@@ -566,11 +685,19 @@ async function renderInventory() {
         ${rmcbLabel}
       </td>
       <td><span class="tier-badge ${tierClass}">${escapeHTML(m.riskTier)}</span></td>
-      <td><span class="status-badge ${statusClass}">${escapeHTML(m.status)}</span></td>
+      <td><span class="status-badge ${statusClass}">${escapeHTML(statusText)}</span></td>
       <td>${actionBtnHTML}</td>
     `;
 
     tbody.appendChild(tr);
+  });
+
+  // Attach event listener for the inline remediate action
+  const remediateBtns = tbody.querySelectorAll(".btn-breach-remediate");
+  remediateBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.getElementById("remediation-form-container").classList.remove("hidden");
+    });
   });
 
   // Attach event listeners for decommission buttons

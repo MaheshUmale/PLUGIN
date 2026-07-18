@@ -82,6 +82,31 @@ The browser plugin handles several critical operational scenarios faced by bank 
 
 ---
 
+## 🌟 Advanced Compliance Capabilities Added
+
+To address 100% of the operational gaps outlined in legal analyses of the RBI guidelines, we have implemented three advanced modules:
+
+### Scenario 6: Real-Time Breach Alerting & Formal Board (RMCB) Reporting
+* **Use Case**: RBI guidelines dictate that any high-risk model experiencing a material performance breach or drift must be formally remediated and reported directly to the Risk Management Committee of the Board (RMCB).
+* **Plugin Capture**:
+  - On launch, the plugin scans for drift breaches (such as active model `MDL-5040` which has `PSI = 0.28`).
+  - If detected, it displays a high-severity red banner alert: **"🚨 CRITICAL COMPLIANCE BREACH: HIGH MODEL DRIFT"**.
+  - Risk officers can click **"Resolve/Log Remediation"** to open a formal reporting panel, document their retraining/compensating plans, check **"Register formal report with Board (RMCB)"**, and submit. This clears the breach status and logs the formal report in the sync console.
+
+### Scenario 7: Spreadsheet Change Management & Formula Diff-Tracking
+* **Use Case**: Financial institutions must enforce rigid change management policies over spreadsheet calculators to prevent unapproved edits to core formulas.
+* **Plugin Capture**:
+  - The injected sliding sidebar features a **Spreadsheet Change Management** card, showing the active coordinate (`Cell H10`) and original formula (`=SUMPRODUCT(...) * 1.15`).
+  - Clicking **"Simulate Formula Edit"** mimics a user modifying the active formula.
+  - The content script instantly suspends the sheet's validation, raising a **"⚠️ UNAPPROVED FORMULA CHANGE DETECTED"** warning card with a side-by-side green and red code diff. It blocks re-validation until the developer enters a formal **"Change Authorization & Impact Assessment"**.
+
+### Scenario 8: Continuous Validation via Scheduled Pipeline Polling
+* **Use Case**: Validation must occur continuously rather than being a static annual checklist.
+* **Plugin Capture**:
+  - In the Sync tab, checking **"Enable Continuous Pipeline Polling"** schedules the service worker to automatically pull performance logs, validation scores, and drift metrics directly from the bank's central machine-learning pipeline, continuously printing validations to the Console Log screen.
+
+---
+
 ## Step 1: Visual Customization & Compilation via Web GUI
 
 To launch and visually customize your bank's extension, follow these steps:
