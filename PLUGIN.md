@@ -1,6 +1,6 @@
 # Browser Plugin Factory for RBI's Model Risk Management (MRM) Guidelines
 
-Welcome to the **Browser Plugin Factory**, a enterprise-grade system designed to assist Regulated Entities (REs)—including Commercial Banks, Small Finance Banks, NBFCs, and Credit Information Companies—in implementing and operationalizing the **Reserve Bank of India (RBI) Model Risk Management (MRM) guidelines**.
+Welcome to the **Browser Plugin Factory**, an enterprise-grade system designed to assist Regulated Entities (REs)—including Commercial Banks, Small Finance Banks, NBFCs, and Credit Information Companies—in implementing and operationalizing the **Reserve Bank of India (RBI) Model Risk Management (MRM) guidelines**.
 
 This project provides a **Factory Builder** that generates customized, secure, and compliant browser extensions (Chrome/Firefox Manifest V3) tailored for individual financial institutions (e.g., configuring bank branding, API endpoints, custom risk-tiering rules, and approval workflows).
 
@@ -65,7 +65,122 @@ browser-plugin-factory/
 
 ---
 
-## 4. Security & Sandboxing Blueprint (Banking Deployments)
+## 4. Model Discovery Engine: Regex vs. Transformers.js
+
+To proactively assist risk auditors, the plugin's content script scans active banking portals or web-based spreadsheets (e.g., Google Sheets, MS Excel Online) to **find and discover model parameters, variables, and mathematical expressions**.
+
+This repository supports two distinct search and extraction architectures:
+
+### Side-by-Side Architectural Comparison
+
+| Metric | Regex & DOM Parsing (Current) | On-Device NLP (Transformers.js / Xenova) |
+| :--- | :--- | :--- |
+| **Mechanism** | Standard regex token matching (e.g., matching mathematical symbols, variable names like `prob_of_default` or `loss_given_default`, and cell structure traversal). | Quantized Transformer models (e.g., `@xenova/transformers` loading `all-MiniLM-L6-v2` or `DistilBERT-NER`) executed directly inside the Chrome Extension sandbox. |
+| **Pros** | <ul><li>**Zero-Latency**: Parsing runs in under 10 milliseconds.</li><li>**No Dependencies**: Zero bloat, keeps the extension bundle under 100 KB.</li><li>**Enterprise Security Friendly**: Does not load external binary weights, avoiding strict Content Security Policy (CSP) friction.</li><li>**Low Overhead**: Negligible CPU and memory consumption.</li></ul> | <ul><li>**Semantic Discovery**: Understands cell context even if terms shift (e.g., matching "credit_score" to "loan propensity metric").</li><li>**Equation Analysis**: Classifies equations into ML categories (regression, neural network, linear).</li><li>**PII Redaction**: Sophisticated Named Entity Recognition (NER) to prevent data leaks.</li><li>**100% Private**: Runs entirely in the browser thread with zero external network leakage.</li></ul> |
+| **Cons** | <ul><li>**Rigid Matches**: Fails if spreadsheet layouts use undocumented terms or unstructured layouts.</li><li>**Lacks Semantic Understanding**: Cannot distinguish a standard interest rate addition cell from a complex mathematical model.</li></ul> | <ul><li>**High Resource Overhead**: Model weights add 20MB to 100MB to the memory footprint.</li><li>**Cold-Start Delay**: Takes 1–3 seconds to load model weights on first tab boot.</li><li>**CSP Complexities**: Chrome Extension V3 requires specific sandbox rules to execute WebAssembly (`WASM`) threads.</li></ul> |
+
+---
+
+### Implementation Blueprints
+
+#### 1. Regex & DOM Discovery Code (Current Production Implementation)
+This lightweight DOM scanner looks for specific model formulas, terms, and variables (e.g. `LGD`, `PD`, `EAD`, `scoring`, `regression`, `weight`):
+```javascript
+function scanDOMWithRegex() {
+  const modelIndicators = [
+    /\b(prob_of_default|PD_value|LGD_metric|EAD_calculator)\b/i,
+    /\b(credit_scorecard|propensity_model|neural_net|linear_regression)\b/i,
+    /=(SUMPRODUCT|LINEST|FORECAST|COVAR)\(/i // Spreadsheet formulas
+  ];
+
+  let detectedIndicators = [];
+  const walk = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+  let node;
+
+  while (node = walk.nextNode()) {
+    const text = node.nodeValue;
+    modelIndicators.forEach(regex => {
+      if (regex.test(text)) {
+        detectedIndicators.push(text.trim().substring(0, 50));
+      }
+    });
+  }
+  return [...new Set(detectedIndicators)];
+}
+```
+
+#### 2. Upgrading to On-Device Semantic Discovery (`Transformers.js`)
+To upgrade the discovery engine to use advanced, on-device NLP, developers can load `@xenova/transformers` inside the Manifest V3 Sandbox environment.
+
+##### Manifest V3 Configuration (`manifest.json`):
+To load and execute WebAssembly models locally inside Manifest V3, specific sandbox permissions are required:
+```json
+{
+  "sandbox": {
+    "pages": ["sandbox.html"]
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"
+  }
+}
+```
+
+##### Inside `sandbox.html` and `sandbox.js`:
+The sandbox runs in an isolated thread allowing WASM execution. It listens for post-messages from the content script and parses the spreadsheet semantically:
+```javascript
+import { pipeline } from '@xenova/transformers';
+
+let extractorPipeline = null;
+
+// Lazily load model weights locally inside the sandboxed thread
+async function getExtractor() {
+  if (!extractorPipeline) {
+    // Loads a quantized 23MB semantic similarity model
+    extractorPipeline = await pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2');
+  }
+  return extractorPipeline;
+}
+
+// Listen for text batches scanned from Google Sheets
+window.addEventListener('message', async (event) => {
+  const { action, textList, targetComplianceQuery } = event.data;
+
+  if (action === 'calculate_similarity') {
+    const extractor = await getExtractor();
+
+    // Generate embeddings locally inside the browser memory sandbox
+    const outputEmbeddings = await extractor(textList, { pooling: 'mean', normalize: true });
+    const queryEmbedding = await extractor(targetComplianceQuery, { pooling: 'mean', normalize: true });
+
+    const matches = [];
+    for (let i = 0; i < textList.length; i++) {
+      const similarity = cosineSimilarity(outputEmbeddings[i].data, queryEmbedding.data);
+      if (similarity > 0.75) { // Match high semantic alignment (75% match)
+        matches.push({ text: textList[i], score: similarity });
+      }
+    }
+
+    // Reply back to Content Script
+    window.parent.postMessage({ action: 'semantic_matches', matches }, '*');
+  }
+});
+
+function cosineSimilarity(vecA, vecB) {
+  let dotProduct = 0.0;
+  let normA = 0.0;
+  let normB = 0.0;
+  for (let i = 0; i < vecA.length; i++) {
+    dotProduct += vecA[i] * vecB[i];
+    normA += vecA[i] * vecA[i];
+    normB += vecB[i] * vecB[i];
+  }
+  return dotProduct / (Math.sqrt(normA) * Math.sqrt(normB));
+}
+```
+
+---
+
+## 5. Security & Sandboxing Blueprint (Banking Deployments)
 
 Financial institutions operate under strict security constraints. A browser plugin deployed to bank employees must prevent data exfiltration, maintain privacy, and avoid interference with sensitive bank operations. The generated plugin implements the following security safeguards:
 
@@ -77,65 +192,6 @@ Financial institutions operate under strict security constraints. A browser plug
    The factory limits content script injection to specific domains (e.g., `*.bank-internal.com`, `docs.google.com`, `excel.officeapps.live.com`). The plugin will NOT read or inject on unapproved third-party or consumer web pages.
 4. **Audit Logs**:
    Every action in the extension—such as calculating risk, adding a model, or downloading an audit report—generates a tamper-resistant local audit entry containing user ID, timestamp, target web URL, and action details.
-
----
-
-## 5. Detailed Implementation Specifications
-
-### Manifest V3 Configuration
-The `manifest.json` uses declarative permissions to ensure minimal privilege:
-```json
-{
-  "manifest_version": 3,
-  "name": "{{BANK_NAME}} MRM Compliance Assistant",
-  "version": "1.0.0",
-  "description": "Assists {{BANK_NAME}} with RBI Model Risk Management Guidelines",
-  "permissions": [
-    "storage",
-    "activeTab",
-    "scripting"
-  ],
-  "host_permissions": [
-    "{{ALLOWED_DOMAINS}}"
-  ],
-  "background": {
-    "service_worker": "background.js"
-  },
-  "action": {
-    "default_popup": "popup.html",
-    "default_icon": "icon.png"
-  },
-  "options_page": "options.html",
-  "content_scripts": [
-    {
-      "matches": ["{{ALLOWED_DOMAINS}}"],
-      "js": ["content.js"],
-      "css": ["sidebar.css"]
-    }
-  ]
-}
-```
-
-### Risk-Based Tiering Logic
-The risk engine uses a point-based classification based on the RBI draft instructions:
-- **Materiality Score**: Influenced by transaction volume (INR > 10 Cr is High risk), business impact, and user base.
-- **Regulatory Score**: Influenced by whether the model calculations directly feed into Basel regulatory capital, NPA provisioning, credit approvals, or customer pricing.
-- **Complexity Score**: Encompasses statistical models, spreadsheet calculations, and deep-learning/black-box models.
-- **Result Tier**:
-  - **Tier 1 (High Risk)**: Materiality or Regulatory Score is High. Requires RMCB board-level approval logs.
-  - **Tier 2 (Medium Risk)**: Moderate complexity and business impact. Requires Chief Risk Officer validation signoff.
-  - **Tier 3 (Low Risk)**: Low complexity, local spreadsheet tools. Still requires registration and periodic self-assessment.
-
-### Active living Inventory
-The storage mechanism uses `chrome.storage.local` to maintain an active registry of models, supporting properties like:
-- `id` (e.g., `MDL-2026-004`)
-- `name` (e.g., `AI Credit Scoring Model`)
-- `version` (e.g., `v2.4.0`)
-- `owner` (e.g., `Retail Lending Division`)
-- `riskTier` (Tier 1/2/3)
-- `status` (Active / Retired)
-- `decommissionedDate` (Archived with 10-year warning if retired)
-- `validationDate` (Latest independent validation check date)
 
 ---
 

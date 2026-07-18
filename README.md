@@ -28,18 +28,30 @@ The **Browser Plugin Factory** is an enterprise solution that allows Banks & NBF
 
 ---
 
-### Key Capabilities of Generated Plugins:
-1. **Interactive Risk-Based Tiering Calculator**: On-the-fly evaluation of model complexity, materiality (e.g., INR 10+ Crores impact), and regulatory capital involvement, with explicit RMCB Board approval workflows for Tier-1 systems.
-2. **Active Living Inventory Interface**: Unified model registry client built into the popup and sidebar with an automated **10-Year retention flag** when a model is decommissioned.
-3. **AI/ML Governance Auditor Checklist**: Real-time auditing for the **7 AI Risk Dimensions** (Drift, Hallucinations, Bias, Adversarial Attacks, Explainability Gaps, Data Privacy, Vendor Concentration) as mandated by the RBI's August 2025 FREE-AI Committee and June 2026 guidelines.
-4. **Third-Party Accountability Tracker**: Evaluates vendor disclosures, independent validations, and logs to ensure the Regulated Entity is never exposed to "vendor blame" liability.
+### 🛡️ Actual Running Plugin Popup Screenshots
+
+Below are screenshots of the **compiled and running browser extension** captured directly from the browser popup interface:
+
+| 1. Active living Model Inventory | 2. Risk-Based Tiering | 3. AI/ML Governance Audit |
+| :---: | :---: | :---: |
+| ![Model Inventory](/docs/images/plugin_inventory.png) | ![Risk-Based Tiering](/docs/images/plugin_tiering.png) | ![AI/ML Audit](/docs/images/plugin_ai_audit.png) |
+
+---
+
+### 📋 Key Use Cases & Scenarios Captured by the Plugin:
+
+1. **Spreadsheet-Based Calculator Auditing (Scenario 1)**: Injects an active sidebar directly on web-based spreadsheets (e.g., Google Sheets or Excel Online) enabling users to register shadow model calculators into the central database with one click.
+2. **RMCB Board-Level Approval Enforcement (Scenario 2)**: Automatically detects **Tier 1 (High Risk)** models based on financial materiality (>INR 10 Crores) and blocks deployment registry until explicit confirmation of Board (RMCB) approval is checked and logged.
+3. **10-Year Archival Retention Lock (Scenario 3)**: Triggers high-priority regulatory warnings upon model decommissioning. Once retired, the model records are locked and stamped with an automated **10-year preservation requirement** to comply with RBI archival rules.
+4. **AI/ML 7-Risk Dimension Oversight (Scenario 4)**: Enforces recording compensating controls targeting the **7 AI Risk Dimensions** (drift, hallucinations, bias, adversarial, explainability, privacy, concentration) and requires documenting **Human-In-The-Loop Override** credentials.
+5. **Vendor Accountability Auditing (Scenario 5)**: Audits third-party models against transparency standards (disclosure, audit rights, annual validation logs), warning procurement teams of **"High Outsourcing Risk"** if logs are missing.
 
 ---
 
 ## Project Structure & Documentation
 
-* **[`QUICKSTART.md`](/QUICKSTART.md)**: Step-by-Step Guide on running the Web GUI customization, compiling extensions with CLI builders, loading unpacked extension in Chrome, and testing compliance workflows.
-* **[`PLUGIN.md`](/PLUGIN.md)**: Detailed Architecture Blueprint, Chrome Extension Manifest V3 Specifications, Security & Sandboxing Policies, and Testing Strategy.
+* **[`QUICKSTART.md`](/QUICKSTART.md)**: Step-by-Step Guide on running the Web GUI customization, compiling extensions with CLI builders, loading unpacked extension in Chrome, and testing compliance workflows with full screenshots and scenario descriptions.
+* **[`PLUGIN.md`](/PLUGIN.md)**: Detailed Architecture Blueprint, Chrome Extension Manifest V3 Specifications, Security & Sandboxing Policies, **Regex vs. Transformers.js search discovery architecture**, and Testing Strategy.
 * **[`factory-app/`](/factory-app/)**: Web GUI configuration page where you can brand, configure, and generate custom browser extensions for your bank.
 * **[`template-extension/`](/template-extension/)**: Base template source code for the Chrome Extension.
 * **[`build-plugin.js`](/build-plugin.js)**: CLI engine that configures, compiles, and packages custom bank plugins.
@@ -51,7 +63,7 @@ The **Browser Plugin Factory** is an enterprise solution that allows Banks & NBF
 
 Ensure you have Node.js installed. To compile a customized plugin from the command line, run:
 ```bash
-node build-plugin.js --bank "HDFC Bank" --color "#1e3a8a" --domains "*://*.hdfcbank.com/*" --api "https://api.hdfcbank.com/mrm-sync"
+node build-plugin.js --bank "Federal Bank of India" --color "#0b3c5d" --domains "*://*.federalbank.co.in/*" --api "https://api.federalbank.co.in/mrm-sync"
 ```
 The script will output a completed Chrome Extension folder and a zip bundle named `dist/rbi-mrm-extension.zip`.
 
