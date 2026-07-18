@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>RBI MRM Assistant Options</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: #f8fafc;
+      color: #334155;
+      margin: 0;
+      padding: 40px;
+    }
+    .options-container {
+      max-width: 600px;
+      background-color: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 30px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+      margin: 0 auto;
+    }
+    h2 {
+      margin-top: 0;
+      color: #0b3c5d;
+      border-bottom: 2px solid #e2e8f0;
+      padding-bottom: 12px;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: #0b3c5d;
+    }
+    input[type="text"], select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #cbd5e1;
+      border-radius: 4px;
+      box-sizing: border-box;
+      font-size: 14px;
+    }
+    .btn-save {
+      background-color: #0b3c5d;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 4px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .btn-save:hover {
+      background-color: #328cc1;
+    }
+    .status {
+      margin-top: 15px;
+      font-weight: 600;
+      color: #2b8a3e;
+      display: none;
+    }
+    .ref-card {
+      background-color: #f1f5f9;
+      padding: 15px;
+      border-radius: 6px;
+      font-size: 12px;
+      margin-top: 25px;
+      border-left: 4px solid #328cc1;
+    }
+  </style>
+</head>
+<body>
+  <div class="options-container">
+    <h2>Enterprise Configuration Options</h2>
+    <p>Configure custom rules and API sync nodes for the RBI Model Risk Management Companion.</p>
+
+    <div class="form-group">
+      <label for="opt-bank-name">Regulated Entity (Bank/NBFC Name)</label>
+      <input type="text" id="opt-bank-name" value="{{BANK_NAME}}">
+    </div>
+
+    <div class="form-group">
+      <label for="opt-sync-api">Central Compliance Sync API Endpoint</label>
+      <input type="text" id="opt-sync-api" value="{{API_ENDPOINT}}">
+    </div>
+
+    <div class="form-group">
+      <label for="opt-materiality-threshold">High Materiality Annual Threshold (INR)</label>
+      <select id="opt-materiality-threshold">
+        <option value="10Cr" selected>10 Crores (Standard RBI Guideline recommendation)</option>
+        <option value="5Cr">5 Crores (Conservative Banking Policy)</option>
+        <option value="25Cr">25 Crores (Large Commercial Bank Policy)</option>
+      </select>
+    </div>
+
+    <button id="btn-save-options" class="btn-save">Save Configurations</button>
+    <div class="status" id="status-message">Configurations successfully saved!</div>
+
+    <div class="ref-card">
+      <strong>⚠️ Information Privacy Safeguard</strong>
+      <p>All configurations are saved securely on local sandboxed storage. Connection to the sync api is conducted over standard TLS (HTTPS) with zero third-party leakage.</p>
+    </div>
+  </div>
+
+  <script src="options.js"></script>
+</body>
+</html>

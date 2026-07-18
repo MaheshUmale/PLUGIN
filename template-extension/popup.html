@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>RBI MRM Assistant</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="header-logo">
+      <span class="bank-title" id="bank-name-display">{{BANK_NAME}}</span>
+      <span class="compliance-badge">RBI MRM Compliance</span>
+    </div>
+    <div class="sandbox-indicator">Secure Sandbox</div>
+  </header>
+
+  <nav class="tab-navigation">
+    <button class="tab-btn active" data-tab="tab-inventory">Model Inventory</button>
+    <button class="tab-btn" data-tab="tab-tiering">Risk Tiering</button>
+    <button class="tab-btn" data-tab="tab-ai-audit">AI/ML Audit</button>
+    <button class="tab-btn" data-tab="tab-vendor">Vendor Tracker</button>
+    <button class="tab-btn" data-tab="tab-sync">Data Sync</button>
+  </nav>
+
+  <main class="tab-container">
+    <!-- TAB: MODEL INVENTORY -->
+    <section id="tab-inventory" class="tab-content active">
+      <div class="section-header">
+        <h3>Active living Model Inventory</h3>
+        <p class="section-desc">Maintain a complete active inventory as mandated by RBI MRMF. Retired models require a mandatory 10-year archive.</p>
+      </div>
+
+      <div class="inventory-controls">
+        <input type="text" id="inventory-search" placeholder="Search models by name or ID...">
+        <button id="btn-open-register-modal" class="btn-primary">Register Model</button>
+      </div>
+
+      <div class="inventory-table-container">
+        <table class="inventory-table" id="table-active-models">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Model Details</th>
+              <th>Risk Tier</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="inventory-tbody">
+            <!-- Dynamically populated -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Register Model Form (Embedded Inline Modal) -->
+      <div id="register-modal" class="modal hidden">
+        <div class="modal-content">
+          <h4>Register New Model in Inventory</h4>
+          <form id="form-register-model">
+            <div class="form-group">
+              <label for="reg-model-name">Model Name *</label>
+              <input type="text" id="reg-model-name" required placeholder="e.g., Propensity Retail Loan Assessor">
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="reg-model-owner">Owner Division *</label>
+                <input type="text" id="reg-model-owner" required placeholder="e.g., Credit Risk">
+              </div>
+              <div class="form-group">
+                <label for="reg-model-version">Version *</label>
+                <input type="text" id="reg-model-version" required placeholder="e.g., 1.0.0">
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="reg-model-tier">Pre-assessed Risk Tier</label>
+              <select id="reg-model-tier">
+                <option value="Tier 1">Tier 1 (High Risk)</option>
+                <option value="Tier 2" selected>Tier 2 (Medium Risk)</option>
+                <option value="Tier 3">Tier 3 (Low Risk)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="reg-model-type">Model Type</label>
+              <select id="reg-model-type">
+                <option value="Statistical">Traditional Statistical</option>
+                <option value="AI-ML">AI/ML Deep Learning</option>
+                <option value="Spreadsheet">Spreadsheet / Spreadsheet-based Calculator</option>
+              </select>
+            </div>
+            <div class="modal-actions">
+              <button type="button" id="btn-close-register" class="btn-secondary">Cancel</button>
+              <button type="submit" class="btn-primary">Add Model</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB: RISK-BASED TIERING CALCULATOR -->
+    <section id="tab-tiering" class="tab-content">
+      <div class="section-header">
+        <h3>Risk-Based Tiering Calculator</h3>
+        <p class="section-desc">Classify models according to complexity, materiality, and regulatory capital relevance.</p>
+      </div>
+
+      <div class="tiering-calculator-card">
+        <div class="question-step" id="q-step-1">
+          <label class="q-label">1. Materiality & Financial Threshold</label>
+          <p class="q-desc">Does this model influence credit transactions or asset values exceeding INR 10 Crores (100,000,000) annually, or impact core balance sheet decisions?</p>
+          <div class="radio-group">
+            <label><input type="radio" name="q-materiality" value="high" required> Yes (High Materiality)</label>
+            <label><input type="radio" name="q-materiality" value="low"> No (Low/Medium Materiality)</label>
+          </div>
+        </div>
+
+        <div class="question-step" id="q-step-2">
+          <label class="q-label">2. Regulatory & Capital Impact</label>
+          <p class="q-desc">Is this model used for calculating Basel Capital Adequacy, NPA provisions, Interest Rate Pricing, or statutory credit reporting?</p>
+          <div class="radio-group">
+            <label><input type="radio" name="q-regulatory" value="high" required> Yes (Direct Regulatory Impact)</label>
+            <label><input type="radio" name="q-regulatory" value="low"> No (Operational/Supportive Impact)</label>
+          </div>
+        </div>
+
+        <div class="question-step" id="q-step-3">
+          <label class="q-label">3. Model Complexity & Methodology</label>
+          <p class="q-desc">Select the category that best fits the model design:</p>
+          <div class="radio-group">
+            <label><input type="radio" name="q-complexity" value="deep" required> Black-box AI/ML Model (Neural Networks, LLMs, GenAI)</label>
+            <label><input type="radio" name="q-complexity" value="stat"> Statistical Model (Regressions, Random Forests, XGBoost)</label>
+            <label><input type="radio" name="q-complexity" value="simple"> Simple Spreadsheet / Formula-based Calculator</label>
+          </div>
+        </div>
+
+        <div class="calc-actions">
+          <button id="btn-calculate-tier" class="btn-primary w-100">Calculate Model Risk Tier</button>
+        </div>
+
+        <div id="tiering-result-card" class="result-card hidden">
+          <div class="result-header">
+            <span>Computed Tier:</span>
+            <strong id="result-tier-label">Tier 1 (High Risk)</strong>
+          </div>
+          <p id="result-explanation">This model has high regulatory and financial importance.</p>
+
+          <div id="rmcb-warning" class="warning-box hidden">
+            <strong>⚠️ RMCB BOARD APPROVAL MANDATORY</strong>
+            <p>Under RBI MRM rules, Tier 1 models require explicit Board-level Risk Management Committee (RMCB) approval before production deployment.</p>
+            <div class="rmcb-verification-input">
+              <label><input type="checkbox" id="chk-rmcb-approved"> Log that Board (RMCB) approval has been secured</label>
+            </div>
+          </div>
+          <button id="btn-save-tier-to-inventory" class="btn-success w-100">Save Assessment to Model Registry</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB: AI/ML GOVERNANCE AUDITOR -->
+    <section id="tab-ai-audit" class="tab-content">
+      <div class="section-header">
+        <h3>AI/ML Governance Auditor</h3>
+        <p class="section-desc">Perform specialized auditing across RBI's 7 AI Risk Dimensions and enforce critical controls.</p>
+      </div>
+
+      <div class="ai-audit-form">
+        <div class="form-group">
+          <label for="ai-audit-model-select">Select Model to Audit</label>
+          <select id="ai-audit-model-select">
+            <option value="">-- Choose Model --</option>
+            <!-- Filled dynamically -->
+          </select>
+        </div>
+
+        <div class="dimensions-accordion">
+          <!-- Dimension 1: Hallucination -->
+          <div class="dimension-item">
+            <div class="dimension-header">
+              <span>1. Hallucination Risk (False outputs as facts)</span>
+              <input type="checkbox" class="audit-check" id="audit-hallucination" data-dim="1">
+            </div>
+            <div class="dimension-body">
+              <p>Are checks in place to prevent false, generated outputs from being presented as fact? Enter compensating controls:</p>
+              <textarea id="control-hallucination" placeholder="e.g., Retrieval Augmented Generation (RAG) validation, prompt limits, output confidence score thresholds..."></textarea>
+            </div>
+          </div>
+
+          <!-- Dimension 2: Bias & Discrimination -->
+          <div class="dimension-item">
+            <div class="dimension-header">
+              <span>2. Bias & Discrimination (Unfair outputs)</span>
+              <input type="checkbox" class="audit-check" id="audit-bias" data-dim="2">
+            </div>
+            <div class="dimension-body">
+              <p>Has training data been scrubbed and evaluated for structural demographic biases? Enter validation methodology:</p>
+              <textarea id="control-bias" placeholder="e.g., Disparate impact ratio, demographical parity analysis, representation scoring..."></textarea>
+            </div>
+          </div>
+
+          <!-- Dimension 3: Model Drift -->
+          <div class="dimension-item">
+            <div class="dimension-header">
+              <span>3. Model Performance Drift</span>
+              <input type="checkbox" class="audit-check" id="audit-drift" data-dim="3">
+            </div>
+            <div class="dimension-body">
+              <p>Are dashboards monitoring inputs and prediction drift (e.g. PSI, KL-divergence) in real-time? Describe alert threshold:</p>
+              <textarea id="control-drift" placeholder="e.g., Monthly population stability index (PSI) checks with alarms at PSI > 0.1..."></textarea>
+            </div>
+          </div>
+
+          <!-- Dimension 4: Adversarial Security -->
+          <div class="dimension-item">
+            <div class="dimension-header">
+              <span>4. Adversarial Attack Safeguards</span>
+              <input type="checkbox" class="audit-check" id="audit-adversarial" data-dim="4">
+            </div>
+            <div class="dimension-body">
+              <p>Has the model been tested against model inversion, membership inference, and adversarial inputs? Enter security control:</p>
+              <textarea id="control-adversarial" placeholder="e.g., Rate limiters, adversarial training, input sanitization..."></textarea>
+            </div>
+          </div>
+
+          <!-- Dimension 5: Explainability Gaps -->
+          <div class="dimension-item">
+            <div class="dimension-header">
+              <span>5. Explainability Gaps (Black-Box)</span>
+              <input type="checkbox" class="audit-check" id="audit-explainability" data-dim="5">
+            </div>
+            <div class="dimension-body">
+              <p>How do business users interpret model predictions? Specify explainability frameworks deployed:</p>
+              <textarea id="control-explainability" placeholder="e.g., SHAP, LIME, local feature importance reports generated for each automated decision..."></textarea>
+            </div>
+          </div>
+
+          <!-- Dimension 6: Data Privacy & Leakage -->
+          <div class="dimension-item">
+            <div class="dimension-header">
+              <span>6. Data Privacy & Leakage</span>
+              <input type="checkbox" class="audit-check" id="audit-privacy" data-dim="6">
+            </div>
+            <div class="dimension-body">
+              <p>Does training or inference expose personally identifiable information (PII) to external vendors? Enter containment controls:</p>
+              <textarea id="control-privacy" placeholder="e.g., On-premise model execution, strict data masking, differential privacy..."></textarea>
+            </div>
+          </div>
+
+          <!-- Dimension 7: Concentration Risk -->
+          <div class="dimension-item">
+            <div class="dimension-header">
+              <span>7. Supply Chain Concentration Risk</span>
+              <input type="checkbox" class="audit-check" id="audit-concentration" data-dim="7">
+            </div>
+            <div class="dimension-body">
+              <p>Is the model heavily reliant on a single cloud vendor? Describe backup and business continuity options:</p>
+              <textarea id="control-concentration" placeholder="e.g., Open-source model alternatives ready for fallback, multi-cloud deployment plan..."></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- Human-In-The-Loop Override control -->
+        <div class="form-group hitl-group">
+          <label><input type="checkbox" id="chk-hitl-override"> <strong>Human-in-the-Loop Override Configured</strong></label>
+          <p class="checkbox-subtext">Under RBI Draft guidelines, AI/ML models MUST permit manual override by bank officers for customer-facing decisions.</p>
+          <input type="text" id="hitl-officer-role" placeholder="Designation of overriding authority (e.g., Chief Risk Officer)">
+        </div>
+
+        <button id="btn-save-ai-audit" class="btn-primary w-100">Save AI Governance Audit Logs</button>
+      </div>
+    </section>
+
+    <!-- TAB: VENDOR & THIRD-PARTY ACCOUNTABILITY -->
+    <section id="tab-vendor" class="tab-content">
+      <div class="section-header">
+        <h3>Third-Party Vendor Accountability Tracker</h3>
+        <p class="section-desc">RBI MRMF mandates that outsourcing does not transfer risk accountability. Vendors must provide complete disclosure and audit rights.</p>
+      </div>
+
+      <div class="vendor-card">
+        <div class="form-group">
+          <label for="vendor-name-input">Vendor Name</label>
+          <input type="text" id="vendor-name-input" placeholder="e.g., OpenAI, FinTech Corp, M2P">
+        </div>
+
+        <div class="vendor-questions">
+          <div class="checkbox-row">
+            <label><input type="checkbox" id="chk-vendor-disclosure"> Vendor disclosed full model limitations, testing methodologies, and bias metrics.</label>
+          </div>
+          <div class="checkbox-row">
+            <label><input type="checkbox" id="chk-vendor-audit-access"> Bank has full independent audit and source code validation access to the model.</label>
+          </div>
+          <div class="checkbox-row">
+            <label><input type="checkbox" id="chk-vendor-independent-val"> Model has been independently validated by an internal or third-party bank-appointed team (Annual requirement).</label>
+          </div>
+        </div>
+
+        <div class="vendor-status-box" id="vendor-risk-status">
+          <strong>⚠️ High Outsourcing Risk Detected</strong>
+          <p>You must establish independent validation of vendor models before deployment in compliance with RBI guidelines.</p>
+        </div>
+
+        <button id="btn-save-vendor-audit" class="btn-primary w-100">Save Vendor Assessment</button>
+      </div>
+    </section>
+
+    <!-- TAB: SYNC AND EXPORT REPORTS -->
+    <section id="tab-sync" class="tab-content">
+      <div class="section-header">
+        <h3>Compliance Report Sync Engine</h3>
+        <p class="section-desc">Synchronize local assessments and audit logs directly to core compliance APIs or generate RBI-compliant PDF/JSON Audit Packs.</p>
+      </div>
+
+      <div class="sync-actions-card">
+        <div class="sync-api-info">
+          <span>Target Sync URL:</span>
+          <strong id="sync-api-endpoint" class="code-text">{{API_ENDPOINT}}</strong>
+        </div>
+
+        <div class="sync-status" id="sync-status-indicator">
+          <div class="status-dot green"></div>
+          <span>Connected to Core Compliance Server. 4 unsynced records.</span>
+        </div>
+
+        <div class="button-row">
+          <button id="btn-sync-now" class="btn-primary">Sync with Core Systems</button>
+          <button id="btn-download-audit" class="btn-secondary">Download RBI Audit Pack (JSON)</button>
+        </div>
+
+        <div class="log-console-container">
+          <label>Compliance Action Console Logs:</label>
+          <div class="log-console" id="log-console-screen">
+            [SYSTEM INFO] Extension loaded. Sandboxed database initiated.<br>
+            [COMPLIANCE ALERT] Active Living Inventory configured with 10-year retention rule.<br>
+            [READY] Monitoring active spreadsheet tabs.
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <span>Enterprise compliance companion v1.0.0</span>
+    <span class="lock-icon">🔒 AES-256 Local Encrypted</span>
+  </footer>
+
+  <script src="popup.js"></script>
+</body>
+</html>

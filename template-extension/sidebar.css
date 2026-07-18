@@ -1,0 +1,194 @@
+/* RBI MRM Sidebar Overlay Styling - Injected on target pages */
+
+#rbi-mrm-launcher {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #0b3c5d;
+  color: white;
+  padding: 10px 16px;
+  border-radius: 50px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 12px;
+  font-weight: bold;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+  z-index: 2147483645; /* Extreme z-index to stay above page layers */
+  transition: transform 0.2s, background-color 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid #328cc1;
+}
+
+#rbi-mrm-launcher:hover {
+  transform: scale(1.05);
+  background-color: #328cc1;
+}
+
+#rbi-mrm-sidebar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 330px;
+  height: 100%;
+  background-color: #f8fafc;
+  border-left: 1px solid #cbd5e1;
+  box-shadow: -4px 0 16px rgba(0, 0, 0, 0.15);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: #334155;
+  z-index: 2147483646;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s ease;
+  box-sizing: border-box;
+}
+
+.rbi-mrm-sidebar-hidden {
+  transform: translateX(100%);
+}
+
+.rbi-mrm-sidebar-visible {
+  transform: translateX(0);
+}
+
+.rbi-sidebar-header {
+  background-color: #0b3c5d;
+  color: white;
+  padding: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.rbi-sidebar-header h4 {
+  margin: 0;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+}
+
+#rbi-sidebar-close {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.rbi-sidebar-body {
+  flex: 1;
+  padding: 14px;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+.rbi-sidebar-alert {
+  background-color: #e0f2fe;
+  border: 1px solid #bae6fd;
+  color: #0369a1;
+  padding: 10px;
+  border-radius: 6px;
+  margin-bottom: 14px;
+  font-size: 11px;
+}
+
+.rbi-sidebar-alert strong {
+  display: block;
+  margin-bottom: 2px;
+}
+
+.rbi-sidebar-alert p {
+  margin: 0;
+}
+
+.rbi-card {
+  background-color: white;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  padding: 12px;
+  margin-bottom: 14px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.rbi-card h5 {
+  margin: 0 0 10px 0;
+  font-size: 12px;
+  color: #0b3c5d;
+  border-bottom: 1px solid #f1f5f9;
+  padding-bottom: 4px;
+}
+
+.rbi-form-group {
+  margin-bottom: 10px;
+}
+
+.rbi-form-group label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.rbi-form-group select {
+  width: 100%;
+  padding: 5px;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  font-size: 11px;
+}
+
+.rbi-btn {
+  width: 100%;
+  padding: 7px;
+  background-color: #0b3c5d;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: bold;
+}
+
+.rbi-btn:hover {
+  background-color: #328cc1;
+}
+
+.rbi-btn-secondary {
+  background-color: #e2e8f0;
+  color: #475569;
+  margin-top: 5px;
+}
+
+.rbi-btn-secondary:hover {
+  background-color: #cbd5e1;
+}
+
+.rbi-result-box {
+  background-color: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  padding: 8px;
+  border-radius: 4px;
+  margin-top: 10px;
+  font-size: 11px;
+}
+
+.rbi-result-box.hidden {
+  display: none !important;
+}
+
+.rbi-small-text {
+  font-size: 10px;
+  color: #64748b;
+  line-height: 1.4;
+  margin: 4px 0 8px 0;
+}
+
+.rbi-sidebar-footer {
+  background-color: #f1f5f9;
+  padding: 8px;
+  text-align: center;
+  font-size: 9px;
+  color: #64748b;
+  border-top: 1px solid #e2e8f0;
+}
