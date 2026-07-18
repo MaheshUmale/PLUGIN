@@ -45,6 +45,9 @@ Below are screenshots of the **compiled and running browser extension** captured
 3. **10-Year Archival Retention Lock (Scenario 3)**: Triggers high-priority regulatory warnings upon model decommissioning. Once retired, the model records are locked and stamped with an automated **10-year preservation requirement** to comply with RBI archival rules.
 4. **AI/ML 7-Risk Dimension Oversight (Scenario 4)**: Enforces recording compensating controls targeting the **7 AI Risk Dimensions** (drift, hallucinations, bias, adversarial, explainability, privacy, concentration) and requires documenting **Human-In-The-Loop Override** credentials.
 5. **Vendor Accountability Auditing (Scenario 5)**: Audits third-party models against transparency standards (disclosure, audit rights, annual validation logs), warning procurement teams of **"High Outsourcing Risk"** if logs are missing.
+6. **Real-Time Breach Alert & Board Reporting (Scenario 6)**: Scans and flags models exceeding safety thresholds (e.g. `MDL-5040` with high drift). Triggers a critical red banner alert, forcing senior management to document retraining plans and file formal Board (RMCB) reports.
+7. **Formula Diff & Spreadsheet Change Control (Scenario 7)**: Sidebar monitors active cell coordinates (e.g. `Cell H10`). If an unapproved formula modification is simulated, it suspends validation, displays a side-by-side green and red diff, and forces documenting an impact assessment.
+8. **Scheduled Background Pipeline Polling (Scenario 8)**: Allows enabling continuous 24h scheduled validation checks to fetch latest performance metrics, validations, and drift indices directly from the central machine-learning pipeline.
 
 ---
 

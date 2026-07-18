@@ -58,6 +58,58 @@ body {
   border-radius: 4px;
 }
 
+/* Breach Alert Banner */
+.breach-banner {
+  background-color: #fecaca;
+  color: #991b1b;
+  border-bottom: 1px solid #fca5a5;
+  padding: 6px 12px;
+  font-size: 11px;
+  line-height: 1.3;
+}
+
+.breach-banner strong {
+  display: block;
+  font-weight: bold;
+}
+
+.breach-banner p {
+  margin: 2px 0 0 0;
+}
+
+.link-span {
+  text-decoration: underline;
+  cursor: pointer;
+  font-weight: bold;
+  color: #b91c1c;
+}
+
+.link-span:hover {
+  color: #7f1d1d;
+}
+
+/* Remediation Card */
+.remediation-card {
+  background-color: #fffbeb;
+  border: 1px solid #fef3c7;
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+
+.remediation-card h4 {
+  margin: 0 0 4px 0;
+  color: #92400e;
+  font-size: 12px;
+}
+
+.form-desc {
+  margin: 0 0 8px 0;
+  font-size: 10px;
+  color: #78350f;
+  line-height: 1.3;
+}
+
 /* Tab Navigation */
 .tab-navigation {
   background-color: white;
@@ -315,6 +367,13 @@ textarea {
   border: 1px solid #cbd5e1;
 }
 
+.status-badge.breach {
+  background-color: #fee2e2;
+  color: #b91c1c;
+  border: 1px solid #fca5a5;
+  font-weight: bold;
+}
+
 /* Modals */
 .modal {
   position: fixed;
@@ -566,6 +625,14 @@ textarea {
   box-shadow: 0 0 4px #22c55e;
 }
 
+.bg-polling-box {
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  padding: 8px;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
 .log-console-container {
   margin-top: 14px;
 }
@@ -606,4 +673,8 @@ textarea {
 .lock-icon {
   font-weight: 600;
   color: var(--success-color);
+}
+
+.hidden {
+  display: none !important;
 }

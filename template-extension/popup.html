@@ -14,6 +14,12 @@
     <div class="sandbox-indicator">Secure Sandbox</div>
   </header>
 
+  <!-- BREACH ALERT HEADER (Visible if high drift breach detected) -->
+  <div id="mrm-breach-alert-banner" class="breach-banner hidden">
+    <strong>🚨 CRITICAL COMPLIANCE BREACH: HIGH MODEL DRIFT</strong>
+    <p>Model <span id="breach-model-id">MDL-5040</span> has exceeded safety limits (PSI: 0.28). <span id="btn-show-remediation" class="link-span">Resolve/Log Remediation</span></p>
+  </div>
+
   <nav class="tab-navigation">
     <button class="tab-btn active" data-tab="tab-inventory">Model Inventory</button>
     <button class="tab-btn" data-tab="tab-tiering">Risk Tiering</button>
@@ -28,6 +34,23 @@
       <div class="section-header">
         <h3>Active living Model Inventory</h3>
         <p class="section-desc">Maintain a complete active inventory as mandated by RBI MRMF. Retired models require a mandatory 10-year archive.</p>
+      </div>
+
+      <!-- Live Remediation Panel (Visible if breach resolve is clicked) -->
+      <div id="remediation-form-container" class="remediation-card hidden">
+        <h4>Breach Remediation & Board (RMCB) Reporting</h4>
+        <p class="form-desc">RBI MRMF mandates that any material model drift breach must be documented, mitigated, and reported directly to the Risk Management Committee of the Board (RMCB).</p>
+        <div class="form-group">
+          <label for="remediation-actions">Compensating Controls & Retraining Plan *</label>
+          <textarea id="remediation-actions" required placeholder="Describe retraining data, fallback threshold filters, or manual human overrides applied..."></textarea>
+        </div>
+        <div class="form-group">
+          <label><input type="checkbox" id="chk-remediation-rmcb"> Register formal report with Board (RMCB)</label>
+        </div>
+        <div class="modal-actions">
+          <button id="btn-cancel-remediation" class="btn-secondary">Dismiss</button>
+          <button id="btn-submit-remediation" class="btn-success">Submit Report & Reset Breach</button>
+        </div>
       </div>
 
       <div class="inventory-controls">
@@ -318,6 +341,12 @@
         <div class="sync-status" id="sync-status-indicator">
           <div class="status-dot green"></div>
           <span>Connected to Core Compliance Server. 4 unsynced records.</span>
+        </div>
+
+        <!-- Continuous Pipeline Polling Option -->
+        <div class="form-group bg-polling-box">
+          <label><input type="checkbox" id="chk-continuous-sync"> <strong>Enable Continuous Pipeline Polling (Scheduled)</strong></label>
+          <p class="checkbox-subtext" style="color: #475569; margin: 2px 0 0 0;">Automatically fetch model performance and validation metrics from the central ML/CI pipeline every 24 hours.</p>
         </div>
 
         <div class="button-row">
