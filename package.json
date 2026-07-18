@@ -1,0 +1,14 @@
+{
+  "name": "rbi-mrm-browser-plugin-factory",
+  "version": "1.0.0",
+  "description": "Enterprise Browser Plugin Factory assisting Banks and NBFCs with RBI Model Risk Management Framework guidelines.",
+  "main": "build-plugin.js",
+  "scripts": {
+    "test": "node test/run-tests.js",
+    "build": "node build-plugin.js"
+  },
+  "author": "Mahesh Umale",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {}
+}

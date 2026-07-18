@@ -1,0 +1,26 @@
+{
+  "manifest_version": 3,
+  "name": "{{BANK_NAME}} RBI MRM Compliance Assistant",
+  "version": "1.0.0",
+  "description": "Enterprise Browser Companion for RBI's Model Risk Management Framework compliance.",
+  "permissions": [
+    "storage",
+    "activeTab",
+    "scripting"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": "icon.png"
+  },
+  "options_page": "options.html",
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "css": ["sidebar.css"]
+    }
+  ]
+}

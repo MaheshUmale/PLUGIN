@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>RBI MRM Browser Plugin Factory Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="factory-header">
+    <div class="header-content">
+      <h1>🛡️ RBI MRM Browser Plugin Factory</h1>
+      <p class="subtitle">Securely Generate Customized Compliance Companion Extensions for Banks & NBFCs</p>
+    </div>
+    <div class="compliance-shield">RBI MRM Guidelines 2026</div>
+  </header>
+
+  <div class="dashboard-grid">
+    <!-- COLUMN 1: CONTROLS & CUSTOMIZATION -->
+    <section class="control-panel card">
+      <h2>1. Customization Settings</h2>
+      <p class="help-text">Input details for your specific Regulated Entity (RE) below. The factory compiler will inject these configurations into the secure sandbox extension codebase.</p>
+
+      <form id="factory-form">
+        <div class="form-group">
+          <label for="input-bank-name">Regulated Entity (RE) Name *</label>
+          <input type="text" id="input-bank-name" value="State Bank of India" required placeholder="e.g., State Bank of India">
+        </div>
+
+        <div class="form-group">
+          <label for="input-theme-color">Primary Brand Theme Color</label>
+          <div class="color-picker-container">
+            <input type="color" id="input-theme-color" value="#0f1e36">
+            <input type="text" id="input-theme-hex" value="#0f1e36">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="input-domains">Permitted Host Domains (Comma Separated) *</label>
+          <input type="text" id="input-domains" value="*://*.sbi.co.in/*, *://docs.google.com/*" required placeholder="e.g., *://*.sbi.co.in/*">
+          <span class="sub-help">Restricts injection to approved internal core networks and spreadsheets.</span>
+        </div>
+
+        <div class="form-group">
+          <label for="input-api-endpoint">Compliance Core API Endpoint *</label>
+          <input type="text" id="input-api-endpoint" value="https://compliance-core.sbi.co.in/mrm-sync" required placeholder="e.g., https://compliance-core.sbi.co.in/mrm-sync">
+          <span class="sub-help">TLS encrypted endpoint for synchronizing living inventories and audit trails.</span>
+        </div>
+
+        <div class="form-group">
+          <label for="input-tier-threshold">High Materiality Threshold Limit</label>
+          <select id="input-tier-threshold">
+            <option value="10Cr">INR 10 Crores (Standard RBI Limit)</option>
+            <option value="5Cr">INR 5 Crores (Conservative Banking Policy)</option>
+            <option value="25Cr">INR 25 Crores (Large Corporate Lending Policy)</option>
+          </select>
+        </div>
+
+        <div class="action-buttons">
+          <button type="button" id="btn-compile-src" class="btn-primary w-100">Compile Extension Source</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- COLUMN 2: REAL-TIME EXTENSION POPUP PREVIEW -->
+    <section class="preview-panel card">
+      <h2>2. Live Extension Popup Preview</h2>
+      <p class="help-text">See how your customized plugin popup dashboard will look on your employee's browser. Try clicking the tabs!</p>
+
+      <!-- Interactive Popup Mockup -->
+      <div class="mock-browser-window">
+        <div class="browser-address-bar">
+          <div class="window-dots">
+            <span class="dot red"></span>
+            <span class="dot yellow"></span>
+            <span class="dot green"></span>
+          </div>
+          <div class="address-input">
+            <span class="lock-icon">🔒</span> https://sheets.google.com/d/credit-rating-sheet
+          </div>
+          <div class="extension-icon-indicator" style="background-color: var(--preview-primary, #0f1e36);">
+            🛡️
+          </div>
+        </div>
+
+        <!-- The actual extension template embedded visually -->
+        <div class="popup-preview-container">
+          <!-- Nested Extension Replica with live CSS variables -->
+          <div class="preview-extension-body">
+            <header class="preview-header">
+              <div>
+                <strong id="prev-bank-name">State Bank of India</strong>
+                <span class="prev-badge">RBI MRM Compliance</span>
+              </div>
+              <span class="prev-sandbox">Secure Sandbox</span>
+            </header>
+
+            <nav class="prev-nav">
+              <button class="prev-tab-btn active" data-prev-tab="prev-tab-inventory">Inventory</button>
+              <button class="prev-tab-btn" data-prev-tab="prev-tab-tiering">Risk Tiering</button>
+              <button class="prev-tab-btn" data-prev-tab="prev-tab-ai-audit">AI Audit</button>
+              <button class="prev-tab-btn" data-prev-tab="prev-tab-sync">Sync Engine</button>
+            </nav>
+
+            <div class="prev-tab-content active" id="prev-tab-inventory">
+              <div class="prev-title">Active living Model Inventory</div>
+              <div class="prev-search-row">
+                <input type="text" placeholder="Search registry..." disabled>
+                <button class="prev-btn-sm" style="background: var(--preview-primary, #0f1e36);">+ Add</button>
+              </div>
+              <table class="prev-table">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Model Details</th>
+                    <th>Tier</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>MDL-2204</strong></td>
+                    <td>
+                      <span class="prev-bold">Retail Scoring AI</span>
+                      <span class="prev-sub">Risk Division • AI-ML</span>
+                    </td>
+                    <td><span class="prev-tier-badge t-1">Tier 1</span></td>
+                    <td><span class="prev-status t-active">Active</span></td>
+                  </tr>
+                  <tr>
+                    <td><strong>MDL-0912</strong></td>
+                    <td>
+                      <span class="prev-bold">Lending Sheet Calculator</span>
+                      <span class="prev-sub">Operations • Spreadsheet</span>
+                    </td>
+                    <td><span class="prev-tier-badge t-3">Tier 3</span></td>
+                    <td><span class="prev-status t-active">Active</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="prev-tab-content" id="prev-tab-tiering">
+              <div class="prev-title">Risk-Based Tiering Calculator</div>
+              <p class="prev-text">Classify models according to complexity, materiality, and regulatory impact.</p>
+
+              <div class="prev-form-group">
+                <label>1. Materiality & Financial Threshold</label>
+                <div class="prev-radios">
+                  <label><input type="radio" checked disabled> Yes (> 10 Crores INR)</label>
+                  <label><input type="radio" disabled> No (Low/Medium)</label>
+                </div>
+              </div>
+              <div class="prev-form-group">
+                <label>2. Regulatory Capital Relevance</label>
+                <div class="prev-radios">
+                  <label><input type="radio" checked disabled> Yes (Capital calculation / NPA)</label>
+                  <label><input type="radio" disabled> No</label>
+                </div>
+              </div>
+
+              <div class="prev-warning-box">
+                <strong>⚠️ RMCB BOARD APPROVAL MANDATORY</strong>
+                <span class="prev-small-desc">Tier-1 high risk requires explicit Board Risk Committee validation.</span>
+              </div>
+            </div>
+
+            <div class="prev-tab-content" id="prev-tab-ai-audit">
+              <div class="prev-title">AI/ML Governance Auditor</div>
+              <p class="prev-text">Covers RBI's 7 AI Risk Dimensions:</p>
+              <div class="prev-checklist">
+                <div><input type="checkbox" checked disabled> 1. Hallucination Guardrails</div>
+                <div><input type="checkbox" checked disabled> 2. Bias Parity Scrubbing</div>
+                <div><input type="checkbox" checked disabled> 3. Drift Alert Dashboards</div>
+                <div><input type="checkbox" checked disabled> 4. Adversarial Protection</div>
+                <div><input type="checkbox" checked disabled> 5. Explainability (SHAP/LIME)</div>
+                <div><input type="checkbox" checked disabled> 6. Data PII Privacy Masking</div>
+                <div><input type="checkbox" checked disabled> 7. Concentration Redundancy</div>
+              </div>
+            </div>
+
+            <div class="prev-tab-content" id="prev-tab-sync">
+              <div class="prev-title">Compliance Sync Engine</div>
+              <div class="prev-sync-box">
+                <span>Sync Server Node:</span>
+                <code id="prev-endpoint-text">https://compliance-core.sbi.co.in/mrm-sync</code>
+                <div class="prev-sync-status">🟢 Connected & Online</div>
+              </div>
+            </div>
+
+            <footer class="prev-footer">
+              <span>Local Sandboxed Companion</span>
+              <span>🔒 Encrypted</span>
+            </footer>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- SOURCE EXPLORER & COMPILATION RESULTS -->
+  <section class="compilation-section card">
+    <div class="compilation-header-row">
+      <h2>3. Compiled Chrome Extension Source Explorer</h2>
+      <div id="compilation-status" class="success-banner hidden">✓ Code Compiled Successfully</div>
+    </div>
+    <p class="help-text">Review and download individual, fully customized extension source files compiled in your browser, or read deployment instructions.</p>
+
+    <div class="explorer-grid">
+      <div class="file-sidebar">
+        <ul id="file-list-ul">
+          <li class="active" data-file="manifest.json">manifest.json</li>
+          <li data-file="popup.html">popup.html</li>
+          <li data-file="popup.js">popup.js</li>
+          <li data-file="popup.css">popup.css</li>
+          <li data-file="content.js">content.js</li>
+          <li data-file="background.js">background.js</li>
+          <li data-file="options.html">options.html</li>
+        </ul>
+      </div>
+      <div class="code-viewer-container">
+        <div class="code-header">
+          <span id="active-file-title">manifest.json</span>
+          <button id="btn-download-file" class="btn-secondary">Download File</button>
+        </div>
+        <pre class="code-block"><code id="code-screen">Loading file...</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- DEPLOYMENT AND INSTRUCTIONS -->
+  <section class="instructions-section card">
+    <h2>4. Enterprise Sideload & Deployment Guide</h2>
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <h4>Extract / Package</h4>
+        <p>Save all compiled files above into a local directory on your machine named <code>mrm-compliance-assistant</code>.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <h4>Open Developer Mode</h4>
+        <p>Launch Google Chrome, go to <code>chrome://extensions</code>, and toggle the <strong>"Developer mode"</strong> switch in the top right corner.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <h4>Load Unpacked</h4>
+        <p>Click on the <strong>"Load unpacked"</strong> button in the top left, and select your extracted folder containing the extension files.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">4</div>
+        <h4>Pin & Enforce</h4>
+        <p>Pin the shield icon 🛡️ to your browser bar. The extension will automatically run in the background, enforcing RBI MRMF rules on all whitelisted banking domains.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="factory-footer">
+    <p>© 2026 Browser Plugin Factory. Built for RBI MRM regulatory audits under Indian Banking Compliance standards.</p>
+  </footer>
+
+  <script src="factory.js"></script>
+</body>
+</html>
