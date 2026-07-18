@@ -20,6 +20,14 @@ To operationalize and enforce compliance with these guidelines directly in web w
 
 The **Browser Plugin Factory** is an enterprise solution that allows Banks & NBFCs to generate customized, secure, and compliant Chrome/Firefox Extensions (Manifest V3). These extensions inject real-time compliance sidebars, calculators, and audit sheets directly into the browser to guide developers and validators.
 
+---
+
+### 📸 Factory Dashboard Interface
+
+![Browser Plugin Factory Dashboard](/docs/images/factory_dashboard.png)
+
+---
+
 ### Key Capabilities of Generated Plugins:
 1. **Interactive Risk-Based Tiering Calculator**: On-the-fly evaluation of model complexity, materiality (e.g., INR 10+ Crores impact), and regulatory capital involvement, with explicit RMCB Board approval workflows for Tier-1 systems.
 2. **Active Living Inventory Interface**: Unified model registry client built into the popup and sidebar with an automated **10-Year retention flag** when a model is decommissioned.
@@ -30,11 +38,33 @@ The **Browser Plugin Factory** is an enterprise solution that allows Banks & NBF
 
 ## Project Structure & Documentation
 
+* **[`QUICKSTART.md`](/QUICKSTART.md)**: Step-by-Step Guide on running the Web GUI customization, compiling extensions with CLI builders, loading unpacked extension in Chrome, and testing compliance workflows.
 * **[`PLUGIN.md`](/PLUGIN.md)**: Detailed Architecture Blueprint, Chrome Extension Manifest V3 Specifications, Security & Sandboxing Policies, and Testing Strategy.
 * **[`factory-app/`](/factory-app/)**: Web GUI configuration page where you can brand, configure, and generate custom browser extensions for your bank.
 * **[`template-extension/`](/template-extension/)**: Base template source code for the Chrome Extension.
 * **[`build-plugin.js`](/build-plugin.js)**: CLI engine that configures, compiles, and packages custom bank plugins.
 * **[`test/`](/test/)**: Extensive automated test suite validating calculations, retention flags, and compilation templates.
+
+---
+
+## 🏃 Quick Start Command (CLI Build)
+
+Ensure you have Node.js installed. To compile a customized plugin from the command line, run:
+```bash
+node build-plugin.js --bank "HDFC Bank" --color "#1e3a8a" --domains "*://*.hdfcbank.com/*" --api "https://api.hdfcbank.com/mrm-sync"
+```
+The script will output a completed Chrome Extension folder and a zip bundle named `dist/rbi-mrm-extension.zip`.
+
+---
+
+## 🧪 Testing and Verification
+
+To execute all unit and integration tests, run:
+```bash
+npm test
+```
+
+This verifies calculations, active living inventories, and CLI compiler builders, ensuring full compliance before deployment.
 
 ---
 
