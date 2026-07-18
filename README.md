@@ -50,6 +50,7 @@ Below are screenshots of the **compiled and running browser extension** captured
 
 ## Project Structure & Documentation
 
+* **[`COMPLIANCE_EVALUATION.md`](/COMPLIANCE_EVALUATION.md)**: Gap Analysis and Evaluation Report of our Browser Plugin Factory against the RBI Draft guidelines (referencing AMLEGALS 2026 legal framework), analyzing completed features and future product roadmaps.
 * **[`QUICKSTART.md`](/QUICKSTART.md)**: Step-by-Step Guide on running the Web GUI customization, compiling extensions with CLI builders, loading unpacked extension in Chrome, and testing compliance workflows with full screenshots and scenario descriptions.
 * **[`PLUGIN.md`](/PLUGIN.md)**: Detailed Architecture Blueprint, Chrome Extension Manifest V3 Specifications, Security & Sandboxing Policies, **Regex vs. Transformers.js search discovery architecture**, and Testing Strategy.
 * **[`factory-app/`](/factory-app/)**: Web GUI configuration page where you can brand, configure, and generate custom browser extensions for your bank.
@@ -87,6 +88,7 @@ For comprehensive regulatory details and instructions on compliance submission, 
 * Vinod Kothari analysis on RBI Draft Model Risk Management Guidelines: https://vinodkothari.com/2026/06/rbi-draft-model-risk-management-guidelines-2026/
 * KPMG analysis: https://assets.kpmg.com/content/dam/kpmgsites/in/pdf/2024/11/model-risk-management.pdf
 * M2P Fintech blog on RBI Draft Guidelines: https://m2pfintech.com/blog/rbi-draft-guidelines-ai-model-risk-management/
+* AMLEGALS Regulatory Principles on Model Risk Management: https://amlegals.com/rbis-draft-model-risk-management-framework-strengthening-ai-governance-in-banking-and-financial-services/
 * NASSCOM Draft MRM Policy analysis: https://community.nasscom.in/communities/public-policy/analysis-rbis-draft-guidance-regulatory-principles-model-risk-management
 
 ---
