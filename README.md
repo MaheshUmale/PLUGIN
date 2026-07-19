@@ -104,8 +104,6 @@ To sideload the generated plugin on your employee browsers:
 
 ## Project Structure & Documentation
 
-* **[`docs/INFOGRAPHICS.md`](/docs/INFOGRAPHICS.md)**: Simple, short, and high-impact marketing infographics explaining how the product aligns boardroom RBI guidelines with active code.
-* **[`LINKEDIN_POST.md`](/LINKEDIN_POST.md)**: Highly engaging corporate marketing template for LinkedIn campaigns.
 * **[`COMPLIANCE_EVALUATION.md`](/COMPLIANCE_EVALUATION.md)**: Gap Analysis and Evaluation Report of our Browser Plugin Factory against the RBI Draft guidelines (referencing AMLEGALS 2026 legal framework), analyzing completed features and future product roadmaps.
 * **[`QUICKSTART.md`](/QUICKSTART.md)**: In-depth Step-by-Step Guide detailing how to use and test every single compliance scenario in the running popup and sidebar.
 * **[`PLUGIN.md`](/PLUGIN.md)**: Detailed Architecture Blueprint, Chrome Extension Manifest V3 Specifications, Security & Sandboxing Policies, **Regex vs. Transformers.js search discovery architecture**, and Testing Strategy.
